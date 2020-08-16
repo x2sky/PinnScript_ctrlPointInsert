@@ -1,0 +1,178 @@
+////////////////////////////////////
+//CtrlPt_Insert.Script
+//insert control points for all the beams
+//
+//Required files that are placed in Script Home:
+//CtrlPt_Insert.py
+//
+//
+//Modified History:
+//2015 09 Becket Hui
+////////////////////////////////////
+
+/*create class that stores variables necessary in this script*/
+Store.At.CP = StringKeyDict {};
+//!!Script Home!!//
+Store.At.CP.At.ScriptHome = SimpleString{String = "/home/ch4jm/PinnacleScripts/CtrlPt_Insert/";};
+///////////////////
+Store.At.CP.At.PatientPath = SimpleString{};
+Store.At.CP.At.PatientPath.AppendString = GetEnv.PATIENTS;
+Store.At.CP.At.PatientPath.AppendString = "/";
+Store.At.CP.At.PatientPath.AppendString = PatientDirectory;
+
+//Choices of number of control points//
+Store.At.CP.At.NCPList = ObjectList{ChildClassName = "SimpleString";};
+Store.At.CP.At.NCPList.CreateChild = "";
+Store.At.CP.At.NCPList.Last.String = "1";
+Store.At.CP.At.NCPList.CreateChild = "";
+Store.At.CP.At.NCPList.Last.String = "2";
+Store.At.CP.At.NCPList.CreateChild = "";
+Store.At.CP.At.NCPList.Last.String = "3";
+Store.At.CP.At.NCPList.CreateChild = "";
+Store.At.CP.At.NCPList.Last.String = "4";
+Store.At.CP.At.NCPList.CreateChild = "";
+Store.At.CP.At.NCPList.Last.String = "5";
+Store.At.CP.At.NCPList.CreateChild = "";
+Store.At.CP.At.NCPList.Last.String = "6";
+Store.At.CP.At.NCPList.CreateChild = "";
+Store.At.CP.At.NCPList.Last.String = "7";
+Store.At.CP.At.NCPList.CreateChild = "";
+Store.At.CP.At.NCPList.Last.String = "8";
+Store.At.CP.At.NCP = SimpleString{String = "4";};
+
+/*create selector window*/
+//Close the current window//
+Store.At.rNWin.Unrealize = "close win";
+Store.FreeAt.rNWin = "free win parameters";
+
+Store.At.rNWin = GeoForm{
+Name = "CtrlPtWindow";
+IsModal = 0;
+};
+//create top level//
+Store.At.rNWin.WidgetList.GeoWidget = {
+Name = "TopLevel";
+WidgetClass = "DrawingArea";
+Label = "Control points window";
+X = 100;
+Y = 100;
+Width = 300;
+Height = 180;
+};
+//some description on window//
+Store.At.rNWin.AddChild = "";
+Store.At.rNWin.WidgetList.Last = {
+Name = "CPWin_Descriptions1";
+ParentName = "TopLevel";
+WidgetClass = "Label";
+X = 10;
+Y = 15;
+Width = 280;
+Height = 20;
+UseDefaultSize = 1;
+Label = "Choose number of control points";
+};
+Store.At.rNWin.AddChild = "";
+Store.At.rNWin.WidgetList.Last = {
+Name = "CPWin_Descriptions2";
+ParentName = "TopLevel";
+WidgetClass = "Label";
+X = 10;
+Y = 35;
+Width = 280;
+Height = 20;
+UseDefaultSize = 1;
+Label = "to be inserted to each beam:";
+};
+//separator//
+Store.At.rNWin.AddChild = "";
+Store.At.rNWin.WidgetList.Last = {
+Name = "HSep1";
+ParentName = "TopLevel";
+WidgetClass = "Separator";
+X = 8;
+Y = 60;
+Width = 290;
+Height = 10;
+};
+//option menu for number of control points//
+Store.At.rNWin.AddChild = "";
+Store.At.rNWin.WidgetList.Last = {
+Name = "Window_NCPOptionMenu";
+ParentName = "TopLevel";
+WidgetClass = "OptionMenu";
+X = 8;
+Y = 75;
+Width = 100;
+Height = 20;
+QueryValueKey = "Store.At.CP.At.NCP.String";
+QueryListKey = "Store.At.CP.At.NCPList.*.String";
+AddAction = "Store.At.CP.At.NCP.String";
+};
+
+//create OK button//
+Store.At.rNWin.AddChild = "";
+Store.At.rNWin.WidgetList.Last = {
+Name = "Window_AddButton";
+ParentName = "TopLevel";
+WidgetClass = "PushButton";
+X = 150;
+Y = 78;
+Width = 100;
+Height = 20;
+Label = "Add";
+//run python to create subscript//
+AddAction = "";
+ReplaceCurrentAction = "Store.At.CP.StringAt.TempCommand = python \"";
+AddAction = "";
+ReplaceCurrentAction = "Store.At.CP.At.TempCommand.AppendString = Store.At.CP.At.ScriptHome.String";
+AddAction = "";
+ReplaceCurrentAction = "Store.At.CP.At.TempCommand.AppendString = CtrlPt_Insert.py\" \"";
+AddAction = "";
+ReplaceCurrentAction = "Store.At.CP.At.TempCommand.AppendString = Store.At.CP.At.PatientPath.String";
+AddAction = "";
+ReplaceCurrentAction = "Store.At.CP.At.TempCommand.AppendString = \" \"";
+AddAction = "";
+ReplaceCurrentAction = "Store.At.CP.At.TempCommand.AppendString = Store.At.CP.At.NCP.String";
+AddAction = "";
+ReplaceCurrentAction = "Store.At.CP.At.TempCommand.AppendString = \"";
+AddAction = "";
+ReplaceCurrentAction = "SpawnCommand = Store.At.CP.At.TempCommand.String";
+//iterate each beam in the beam list and run the subscript//
+AddAction = "";
+ReplaceCurrentAction = "Store.At.CP.StringAt.TempCommand = Store.At.CP.At.PatientPath.String";
+AddAction = "";
+ReplaceCurrentAction = "Store.At.CP.At.TempCommand.AppendString = addCPAllB.Script";
+AddAction = "";
+ReplaceCurrentAction = "Echo = Store.At.CP.At.TempCommand.String";
+AddAction = "";
+ReplaceCurrentAction = "Script.ExecuteNow = Store.At.CP.At.TempCommand.String";
+AddAction = "";
+ReplaceCurrentAction = "Store.At.rNWin.Unrealize";
+AddAction = "";
+ReplaceCurrentAction = "Store.FreeAt.CP";
+AddAction = "";
+ReplaceCurrentAction = "Store.FreeAt.rNWin";
+};
+
+//create dismiss button//
+Store.At.rNWin.AddChild = "";
+Store.At.rNWin.WidgetList.Last = {
+Name = "Window_DismissButton";
+ParentName = "TopLevel";
+WidgetClass = "PushButton";
+X = 5;
+Y = 130;
+Width = 100;
+Height = 20;
+Label = "Dismiss";
+AddAction = "";
+ReplaceCurrentAction = "Store.At.rNWin.Unrealize";
+AddAction = "";
+ReplaceCurrentAction = "Store.FreeAt.CP";
+AddAction = "";
+ReplaceCurrentAction = "Store.FreeAt.rNWin";
+};
+
+//create the window//
+Store.At.rNWin.Create = "";
